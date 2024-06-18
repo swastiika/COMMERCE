@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h2>Create New Listing</h2>
+<form action="{% url 'category' %}" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="category">Category</label>
+        <input type="text" class="form-control" id="category" name="category" placeholder="Enter category" required>
+    </div>
+    <button type="submit" class="btn btn-success">Create New Listing</button>
+</form>
+
+{% endblock %}

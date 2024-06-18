@@ -15,7 +15,7 @@ def createListing(request):
         description = request.POST.get("description")
         imageurl = request.POST.get("imageurl")
         price = request.POST.get("price")
-        category = request.POST.get("catagory")
+        category = request.POST.get("category")
         category_name = Category.objects.get(category_name=category)
 
         new_listing = Listing(
@@ -28,11 +28,30 @@ def createListing(request):
         )
         new_listing.save()
 
-        return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("index"))
+
+def createCategory(request):
+    if request.method == "GET":
+        return render(request, "auctions/category.html")
+    else:
+        category= request.POST.get("category")
+
+
+        new_category =Category(
+          category_name = category
+        )
+        new_category.save()
+
+    return HttpResponseRedirect(reverse("index"))
+
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    activeListing = Listing.objects.filter(is_active= True)
+    return render(request, "auctions/index.html",{
+        "listings":activeListing
+    })
+
 
 
 def login_view(request):
