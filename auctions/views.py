@@ -45,11 +45,29 @@ def createCategory(request):
     return HttpResponseRedirect(reverse("index"))
 
 
-
 def index(request):
     activeListing = Listing.objects.filter(is_active= True)
+    allcategories = Category.objects.all()
     return render(request, "auctions/index.html",{
-        "listings":activeListing
+        "listings":activeListing,"category":allcategories
+    })
+def displaycat(request):
+    if request.method=="POST":
+        allcategories= Category.objects.all()
+        categoryinput = request.POST['category']
+        category = Category.objects.get(category_name=categoryinput)
+        activeListing = Listing.objects.filter(is_active=True,category=category)
+        return render(request,"auctions/index.html",{
+            "listings":activeListing,"category": allcategories
+        })
+    
+
+def listing(request,id):
+    listingdata = Listing.objects.get(pk=id)
+
+    isListingWatchlist = True
+    return render(request,"auctions/listing.html",{
+        "listing":listingdata,"iswatch":isListingWatchlist
     })
 
 
