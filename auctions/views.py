@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User,Listing,Category
+from .models import User,Listing,Category,Comment
 
 from .models import User
 def createListing(request):
@@ -64,14 +64,32 @@ def displaycat(request):
 
 def listing(request,id):
     listingdata = Listing.objects.get(pk=id)
-
-    isListingWatchlist = True
+    isListingWatchlist = request.user in listingdata.watchlist.all()
     return render(request,"auctions/listing.html",{
         "listing":listingdata,"iswatch":isListingWatchlist
     })
 
+def watchlist(request):
+    currentUser = request.user
+    listings = currentUser.listingWatchlist.all()
+    return render(request,"auctions/watchlist.html",{
+        "listings":listings
+    })
 
 
+def removewatchlist(request,id):
+    listingData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    listingData.watchlist.remove(currentUser)
+    return HttpResponseRedirect(reverse("listing",args=(id, )))
+
+
+
+def addwatchlist(request,id):
+    listingData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    listingData.watchlist.add(currentUser)
+    return HttpResponseRedirect(reverse("listing",args=(id, )))
 def login_view(request):
     if request.method == "POST":
 
@@ -122,3 +140,15 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+def addcomment(request,id):
+    currentUser = request.user
+    listingData = Listing.objects.get(pk=id)
+    message = request.POST['newcomment']
+    newComment = Comment(
+        author=currentUser,
+        listing = listingData,
+        message = message
+
+    )
+    newComment.save()
+    return HttpResponseRedirect(reverse("listing",args=(id )))
