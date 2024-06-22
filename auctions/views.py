@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User,Listing,Category,Comment
+from .models import User,Listing,Category,Comment,Bid
 
 from .models import User
 def createListing(request):
@@ -13,16 +13,17 @@ def createListing(request):
     else:
         title = request.POST.get("title")
         description = request.POST.get("description")
+        currentUser = request.user
         imageurl = request.POST.get("imageurl")
         price = request.POST.get("price")
         category = request.POST.get("category")
         category_name = Category.objects.get(category_name=category)
-
+        bid = Bid(bid =float(price),user=currentUser)
         new_listing = Listing(
             title=title,
             description=description,
             imageurl=imageurl,
-            price=float(price),
+            price=bid,
             category=category_name,
             owner=request.user
         )
@@ -64,9 +65,11 @@ def displaycat(request):
 
 def listing(request,id):
     listingdata = Listing.objects.get(pk=id)
+    allcomments = Comment.objects.filter(listing = listingdata)
     isListingWatchlist = request.user in listingdata.watchlist.all()
     return render(request,"auctions/listing.html",{
-        "listing":listingdata,"iswatch":isListingWatchlist
+        "listing":listingdata,"iswatch":isListingWatchlist,
+        "comments":allcomments
     })
 
 def watchlist(request):
