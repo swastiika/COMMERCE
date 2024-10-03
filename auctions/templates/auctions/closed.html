@@ -1,0 +1,27 @@
+{% extends 'auctions/layout.html' %}
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4">Archived Auctions</h2>
+    <ul class="list-unstyled">
+        {% for listing in listings %}
+        <li class="d-flex align-items-start border p-3 mb-4 rounded shadow-sm">
+            <img src="{{ listing.imageUrl }}" alt="Image not available" class="img-fluid" style="width: 150px; height: auto;">
+            <div class="ps-3">
+                <h5 class="mb-2 fw-bold">
+                    {{ listing.title }}
+                </h5>
+
+                {% if user == listing.owner %}
+                    <p class="text-danger">YOUR AUCTION IS CLOSED</p>
+                {% elif user == listing.won %}
+                    <h4 class="text-success">CONGRATULATIONS, YOU WON!</h4>
+                    <p class="mb-2">You won this auction at a price of <strong>{{ listing.price }}</strong></p>
+                {% endif %}
+                    <p class="mb-2">Auction closed at <strong>{{ listing.price }}</strong></p>
+             
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

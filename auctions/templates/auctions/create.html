@@ -1,0 +1,51 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    <div class="container mt-5">
+        {% if messages %}
+            <div class="alert alert-info">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <h2>Create Listing</h2>
+        <form action="{% url 'create' %}" method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" name="title" id="title" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="description" id="description" class="form-control" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="imageUrl" class="form-label">Image URL</label>
+                <input type="text" name="url" id="imageUrl" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="category" class="form-label">Select Category</label>
+                <select name="category" id="category" class="form-select me-2" style="width: auto;">
+                    <option value="" disabled selected>Select Category</option>
+                    {% for cat in category %}
+                    <option value="{{ cat.id }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="price" class="form-label">Bid Price</label>
+                <input type="number" name="price" id="price" class="form-control" required>
+            </div>
+            
+            <button type="submit" class="btn btn-success">Create Listing</button>
+        </form>
+    </div>
+{% endblock %}

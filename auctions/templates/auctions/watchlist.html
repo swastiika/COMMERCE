@@ -1,0 +1,37 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    
+    <h2>Active Listings</h2>
+    <div class="row">
+        {% if listings %}
+            {% for listing in listings %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ listing.imageUrl }}" class="card-img-top" alt="Image not available" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">Price: ${{ listing.price }}</p>
+                            <p class="text-muted"><small>Created at: {{ listing.created_at }}</small></p>
+                            
+                            <!-- Flex container for buttons -->
+                            <div class="d-flex justify-content-between mt-2">
+                                <a href="{% url 'listing' id=listing.id %}" class="btn btn-primary">View Listing</a>
+
+                                <!-- Form for removing from watchlist -->
+                                <form action="{% url 'removewatchlist' id=listing.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Remove Watchlist</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No active listings available.</p>  <!-- Added message for no listings -->
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

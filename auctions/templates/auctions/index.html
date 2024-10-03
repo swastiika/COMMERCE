@@ -1,0 +1,44 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <form action="{% url 'index' %}" method="POST" class="mb-4">
+        {% csrf_token %}
+        <div class="d-flex">
+            <select name="category" id="category" class="form-select me-2" style="width: auto;">
+                <option value="" disabled selected>Select Category</option>
+                <option value="none">All Category</option>
+
+                {% for cat in category %}
+                <option value="{{ cat.id }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-success" style="height: fit-content;">Select</button>
+        </div>
+    </form>
+    
+
+    <h2>Active Listings</h2>
+    <div class="row">
+        {% if listings %}
+            {% for listing in listings %}
+                {% if listing.is_active %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ listing.imageUrl }}" class="card-img-top" alt="Image not available" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">Price: ${{ listing.price }}</p>
+                            <p class="text-muted"><small>Created at: {{ listing.created_at }}</small></p>
+                            <a href="{% url 'listing' id=listing.id %}" class="btn btn-primary">View Listing</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>No active listings available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
